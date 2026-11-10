@@ -1,93 +1,72 @@
-# LifeLine Navigator — Web Frontend + C++ API
+# LifeLine Navigator
 
-This version keeps the original C/C++ hospital-management logic and adds a minimal browser interface.
+**A Hospital Management System built using C, C++, HTML, CSS, and JavaScript.**
 
-## Features in this first web version
+LifeLine Navigator is a web-based hospital management system designed to simplify essential hospital operations, including patient registration, admission management, doctor management, bed allocation, and billing.
 
-- Overview dashboard with patient counts and bed availability
-- Patient registration and patient directory/search/filter
-- FIFO admission queue and **Admit next patient** action
-- Doctor availability
-- General and ICU bed overview
-- Patient bill lookup, extra charges, and discharge
+The project combines the efficiency of C and C++ data structures with a clean, interactive web interface..
 
-The browser communicates with the C++ application through a local HTTP API. The queue, bed stack, doctor linked list, patient classes, and billing implementation remain C/C++.
 
-## Requirements on Windows
+## Features
 
-Install:
+- Dashboard: Get an overview of hospital operations.
+- Patient Management: Register, view, and search patient records.
+- Admission Queue: Manage patient admissions using a FIFO queue.
+- Doctor Management: Maintain doctor information and availability.
+- Bed Management: Manage general and ICU bed allocation.
+- Billing & Discharge: Handle patient billing and discharge operations.
+- Dark Mode: Easier on the eyes
 
-1. **VS Code**
-2. **Git for Windows** (CMake uses Git to download the two small header/library dependencies)
-3. **CMake 3.20 or newer**
-4. A C/C++ compiler. One straightforward option is **MSYS2 UCRT64** with GCC and MinGW Make:
+## Data Structures Used
 
-   ```bash
-   pacman -S --needed base-devel mingw-w64-ucrt-x86_64-gcc mingw-w64-ucrt-x86_64-cmake mingw-w64-ucrt-x86_64-make git
-   ```
+*The project demonstrates the practical application of fundamental data structures:*
+    - Linked Lists: Patient and doctor record management.
+    - Queues: FIFO-based patient admission processing.
+    - Stacks: Bed allocation management.
+    - Classes and Objects: Object-oriented implementation of hospital entities.
 
-   Run the build commands below from the **MSYS2 UCRT64 terminal**, opened in this project folder. Alternatively, use a configured Visual Studio C++ toolchain and the Visual Studio CMake generator.
+## Project Architecture
 
-## Build and run (MSYS2 UCRT64)
+*The frontend communicates with the C++ backend through HTTP requests. The backend processes these requests using the existing C/C++ modules and returns responses to the frontend.*
 
-From the project root (the folder containing `CMakeLists.txt`):
+          USER
+            |
+            v
+     WEB INTERFACE
+    (HTML / CSS / JS)
+            |
+            | HTTP Requests
+            v
+      C++ HTTP SERVER
+            |
+            v
+     BACKEND LOGIC
+       (C / C++)
+            |
+      +-----+------+
+      |     |      |
+   Patient Doctor  Bed
+   Module  Module Module
+            |
+            v
+      JSON Response
+            |
+            v
+      WEB INTERFACE
 
-```bash
-cmake -S . -B build -G "MinGW Makefiles"
-cmake --build build -j
-./build/lifeline_server.exe
-```
 
-Then open **http://127.0.0.1:8080** in your browser.
+## Project Information
 
-The first CMake configure downloads `cpp-httplib` and `nlohmann/json` from their official GitHub repositories, so an internet connection is needed for the first build. Later builds use the cached dependencies.
+- Project Name: LifeLine Navigator
+- Project Type: Project-Based Learning (PBL)
+- Domain: Hospital Management System
+- Languages: C and C++
+- Frontend: HTML, CSS and JavaScript
 
-To stop the server, focus the terminal and press `Ctrl+C`.
+## Contributors
 
-## Keep using the original terminal version
-
-The original command-line application is still built as a separate target:
-
-```bash
-./build/lifeline_cli.exe
-```
-
-## API endpoints
-
-| Method | Endpoint | Purpose |
-|---|---|---|
-| GET | `/api/health` | Check API status |
-| GET | `/api/dashboard` | Dashboard counters |
-| GET | `/api/patients` | List patient records |
-| POST | `/api/patients` | Register a patient |
-| POST | `/api/admissions/next` | Admit the next waiting patient |
-| GET | `/api/doctors` | List doctors and availability |
-| GET | `/api/beds` | List general and ICU beds |
-| GET | `/api/bills/{patientId}` | View a patient's bill |
-| POST | `/api/bills/{patientId}/charges` | Add a charge (rupees) |
-| POST | `/api/patients/{patientId}/discharge` | Discharge a patient and close the bill |
-
-## Important project notes
-
-- Data is currently held in memory, matching the original project design. Restarting the server resets patients, bills, and bed assignments.
-- This is a local PBL/demo application, not a production hospital system. It has no login, database persistence, HTTPS, or production security hardening.
-- Admission keeps the existing rules: severity 8–10 requires ICU; other patients use general beds. A matching free doctor is also required.
-- Doctor roster and bill line-item read accessors were added so the API can return structured data without parsing terminal output.
-- The original `main.cpp` remains available as the CLI entry point; the web server uses `api.cpp` and `hospital_service.cpp` instead.
-
-## Project layout
-
-```text
-LifeLine-Navigator/
-├── CMakeLists.txt
-├── README.md
-├── frontend/
-│   ├── index.html
-│   ├── style.css
-│   └── app.js
-└── src/
-    ├── api.cpp
-    ├── hospital_service.cpp
-    ├── hospital_service.h
-    └── original .c, .cpp and .h source files
-```
+Add your team members here:
+- Shorya Tamoli
+- Shaurya Sharma
+- Kunal Bisht
+- Ujjwal Pilkhwal
