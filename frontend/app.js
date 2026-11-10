@@ -227,3 +227,9 @@ $('#chargeForm').addEventListener('submit', async event => {
 
 $('#todayLabel').textContent = new Intl.DateTimeFormat('en-IN', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }).format(new Date());
 refreshOverview();
+
+// Admin logout
+$('#adminLogout').addEventListener('click', () => {
+    sessionStorage.removeItem('loggedInRole');
+    window.location.href = '/admin-login.html';
+});

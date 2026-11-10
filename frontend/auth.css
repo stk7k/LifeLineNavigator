@@ -1,0 +1,260 @@
+
+:root {
+    --bg: #0b1120;
+    --surface: #151e30;
+    --surface-hover: #1c2940;
+    --ink: #e5edf8;
+    --muted: #94a3b8;
+    --line: #26344a;
+    --primary: #3779f3;
+    --admin_red: #c9203c9f;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: Arial, sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+
+.portal-container {
+    width: 100%;
+    max-width: 430px;
+    text-align: center;
+}
+
+.portal-brand {
+    margin-bottom: 35px;
+}
+
+.brand-icon {
+    width: 58px;
+    height: 58px;
+    margin: 0 auto 16px;
+    display: grid;
+    place-items: center;
+    background: var(--primary);
+    border-radius: 16px;
+    font-size: 32px;
+    font-weight: bold;
+    color: white;
+}
+
+.portal-brand h1 {
+    font-size: 28px;
+    letter-spacing: -1px;
+}
+
+.portal-brand h1 span {
+    color: var(--primary);
+}
+
+.portal-brand p {
+    margin-top: 8px;
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.portal-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 30px;
+    text-align: left;
+}
+
+.portal-card h2 {
+    font-size: 23px;
+    margin-bottom: 8px;
+}
+
+.portal-card > p {
+    color: var(--muted);
+    font-size: 14px;
+    margin-bottom: 26px;
+}
+
+.portal-button {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 17px 18px;
+    margin-top: 13px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: 0.2s;
+}
+
+.admin-button {
+    background: var(--admin_red);
+    color: white;
+}
+
+.patient-button {
+    background: var(--primary);
+    color: var(--ink);
+    border: 1px solid var(--line);
+}
+
+.portal-button:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.12);
+}
+
+footer {
+    margin-top: 28px;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+/* LOGIN DIfferent
+
+
+/* LOGIN PAGES */
+
+.login-container {
+    width: 100%;
+    max-width: 430px;
+    margin: auto;
+}
+
+.back-link {
+    display: inline-block;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 14px;
+    margin-bottom: 30px;
+}
+
+.back-link:hover {
+    color: var(--ink);
+}
+
+.login-brand {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.login-brand h1 {
+    font-size: 26px;
+    letter-spacing: -1px;
+}
+
+.login-brand h1 span {
+    color: var(--accent_navigator);
+}
+
+.login-brand p {
+    color: var(--muted);
+    font-size: 13px;
+    margin-top: 7px;
+}
+
+.login-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 30px;
+}
+
+.login-heading {
+    margin-bottom: 28px;
+}
+
+.portal-tag {
+    display: inline-block;
+    color: var(rgb(182, 178, 178));
+    background: var(--surface-hover);
+    padding: 7px 11px;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    margin-bottom: 15px;
+}
+
+.login-heading h2 {
+    font-size: 24px;
+    margin-bottom: 8px;
+}
+
+.login-heading p {
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 9px;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 14px;
+    border-radius: 9px;
+    border: 1px solid var(--line);
+    background: var(--bg);
+    color: var(--ink);
+    font-size: 14px;
+    outline: none;
+}
+
+.form-group input:focus {
+    border-color: var(--accent);
+}
+
+.form-group input::placeholder {
+    color: #64748b;
+}
+
+.login-button {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 9px;
+    background: var(--accent);
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 5px;
+    transition: 0.2s;
+}
+
+.login-button:hover {
+    filter: brightness(1.12);
+    transform: translateY(-1px);
+}
+
+.login-footer {
+    color: var(--muted);
+    text-align: center;
+    font-size: 12px;
+    margin-top: 24px;
+}
+
+.admin-theme {
+    --accent: #c9203ca6;
+    --accent_navigator: #4f8cff;
+}
+
+.patient-theme {
+    --accent: #2168ee;
+}

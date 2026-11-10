@@ -1,0 +1,35 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Dashboard | LifeLine Navigator</title>
+    <link rel="stylesheet" href="/auth.css">
+</head>
+<body>
+
+    <main class="portal-container">
+        <section class="portal-card">
+            <h2>Patient Dashboard</h2>
+            <p>Welcome to LifeLine Navigator!</p>
+
+            <button class="login-button" onclick="logout()">
+                Log Out
+            </button>
+        </section>
+    </main>
+
+    <script>
+        if (sessionStorage.getItem("loggedInRole") !== "patient") {
+            window.location.href = "/patient-login.html";
+        }
+
+        function logout() {
+            sessionStorage.removeItem("loggedInRole");
+            window.location.href = "/";
+        }
+    </script>
+
+</body>
+</html>

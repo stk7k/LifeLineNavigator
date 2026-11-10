@@ -8,21 +8,6 @@
 
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap');
 
-/*:root {
-    --bg: #f6f8fb;
-    --surface: #fff;
-    --ink: #17212f;
-    --muted: #7b8797;
-    --line: #e9edf2;
-    --primary: #2563eb;
-    --primary-dark: #1d4ed8;
-    --green: #15966a;
-    --amber: #c17b16;
-    --red: #d34e4e;
-    --sidebar: #fff;
-    --shadow: 0 8px 30px rgba(31, 48, 73, .045);
-*/
-
 :root {
     --bg: #101827;
     --surface: #151e30;
@@ -196,20 +181,35 @@ button {
 }
 
 .status-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: #22b77b;
+    width: 10px;
+    height: 10px;
+    border-radius: 40%;
+    background: #229466;
     box-shadow: 0 0 0 4px #e1f7ed;
 }
 
 .sidebar-foot {
     display: block;
-    text-align: center;
+    text-align: left;
     color: #a4adba;
-    font-size: 9px;
-    letter-spacing: 1px;
+    font-size: 10px;
+    letter-spacing: 3px;
     margin-top: 19px;
+    margin-left: 10px;
+}
+
+.logout-link {
+    color: #c9203ca6;
+    width: 100%;
+    cursor: pointer;
+    text-align: left;
+    background: transparent;
+    border: none;
+    font: inherit;
+}
+
+.logout-link:hover {
+    color: #c9203ca6;
 }
 
 /* MAIN AREA */
