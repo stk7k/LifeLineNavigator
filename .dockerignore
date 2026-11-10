@@ -1,11 +1,51 @@
-.git
-.vscode
-.idea
+
+# Git files
+.git/
+.gitignore
+.gitattributes
+
+# IDE and editor files
+.vscode/
+.idea/
+*.code-workspace
+
+# Build directories
 build/
 cmake-build-*/
 out/
+
+# Compiled files
 *.exe
+*.dll
+*.so
+*.a
 *.o
 *.obj
+*.lib
+
+# CMake generated files
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+
+# Operating system files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs and temporary files
+*.log
+*.tmp
+*.bak
+
+# Local databases
 *.db
 *.sqlite
+*.sqlite3
+*.db-journal
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
