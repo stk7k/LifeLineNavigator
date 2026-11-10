@@ -63,10 +63,42 @@ The project combines the efficiency of C and C++ data structures with a clean, i
 - Languages: C and C++
 - Frontend: HTML, CSS and JavaScript
 
+
+## Installation & Setup
+
+*Prerequisites*
+
+Make sure you have the following installed:
+- Git
+- CMake
+- A C/C++ compiler (GCC/G++)
+- MSYS2 with the UCRT64 environment on Windows
+
+1. Clone the repository
+    git clone [https://github.com/stk7k/LifeLineNavigator.git]
+    cd LifeLine-Navigator
+
+- Replace YOUR_REPOSITORY_URL with your GitHub repository URL.
+
+2. Configure the project
+    cmake -S . -B build -G "MinGW Makefiles"
+
+3. Build the project
+    cmake --build build -j4
+
+4. Run the application
+    ./build/lifeline_server.exe
+
+5. Open in your browser
+    Run the build to get a complete working frontend
+
+
 ## Contributors
 
-Add your team members here:
+The Team:
 - Shorya Tamoli
 - Shaurya Sharma
 - Kunal Bisht
 - Ujjwal Pilkhwal
+
+**Consider Starring Our Repo If You Liked Our Product**
