@@ -75,22 +75,21 @@ Make sure you have the following installed:
 - MSYS2 with the UCRT64 environment on Windows
 
 1. Clone the repository
-    git clone [https://github.com/stk7k/LifeLineNavigator.git]
-    cd LifeLine-Navigator
+    git clone [ https://github.com/stk7k/LifeLineNavigator.git ]
+    - cd LifeLine-Navigator
 
-- Replace YOUR_REPOSITORY_URL with your GitHub repository URL.
 
 2. Configure the project
-    cmake -S . -B build -G "MinGW Makefiles"
+    - cmake -S . -B build -G "MinGW Makefiles"
 
 3. Build the project
-    cmake --build build -j4
+    - cmake --build build -j4
 
 4. Run the application
-    ./build/lifeline_server.exe
+    - ./build/lifeline_server.exe
 
 5. Open in your browser
-    Run the build to get a complete working frontend
+    - Run the build to get a complete working frontend
 
 
 ## Contributors

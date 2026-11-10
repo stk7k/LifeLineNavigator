@@ -3,6 +3,7 @@
 #include <nlohmann/json.hpp>
 #include <iostream>
 #include <string>
+#include <cstdlib>
 
 using nlohmann::json;
 
@@ -65,12 +66,27 @@ int main() {
     });
     server.set_mount_point("/", "frontend");
 
-    const char *host = "127.0.0.1";
-    const int port = 8080;
-    std::cout << "LifeLine Navigator is running at http://" << host << ":" << port << "\n";
-    std::cout << "Press Ctrl+C to stop the server.\n";
+    //const char *host = "127.0.0.1";
+    //const int port = 8080;
+    //std::cout << "LifeLine Navigator is running at http://" << host << ":" << port << "\n";
+    //std::cout << "Press Ctrl+C to stop the server.\n";
+    //if (!server.listen(host, port)) {
+    //    std::cerr << "Could not start the server. Is port " << port << " already in use?\n";
+    //    return 1;
+    //}
+
+    const char *host = "0.0.0.0";
+    int port = 8080;
+
+    if (const char *port_env = std::getenv("PORT")) {
+        port = std::stoi(port_env);
+    }
+
+    std::cout << "LifeLine Navigator listening on "
+            << host << ":" << port << "\n";
+
     if (!server.listen(host, port)) {
-        std::cerr << "Could not start the server. Is port " << port << " already in use?\n";
+        std::cerr << "Could not start server.\n";
         return 1;
     }
     return 0;

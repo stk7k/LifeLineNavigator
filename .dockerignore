@@ -1,0 +1,11 @@
+.git
+.vscode
+.idea
+build/
+cmake-build-*/
+out/
+*.exe
+*.o
+*.obj
+*.db
+*.sqlite
