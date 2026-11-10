@@ -90,11 +90,88 @@ async function admitNext() {
   try { const result = await api('/admissions/next', { method: 'POST', body: '{}' }); toast(result.message); await refreshAll(); }
   catch (e) { toast(e.message, true); }
 }
+//async function dischargePatient(id) {
+//  if (!confirm(`Discharge patient #${id}? This will close their bill and release their bed and doctor.`)) return;
+//  try { const result = await api(`/patients/${id}/discharge`, { method: 'POST', body: '{}' }); toast(`${result.message} Total: ${money(result.totalPaise)}`); await refreshAll(); }
+//  catch (e) { toast(e.message, true); }
+//}
+
+
 async function dischargePatient(id) {
-  if (!confirm(`Discharge patient #${id}? This will close their bill and release their bed and doctor.`)) return;
-  try { const result = await api(`/patients/${id}/discharge`, { method: 'POST', body: '{}' }); toast(`${result.message} Total: ${money(result.totalPaise)}`); await refreshAll(); }
-  catch (e) { toast(e.message, true); }
+    const confirmed = await showConfirmModal({
+        title: "Discharge Patient",
+        message: `Are you sure you want to discharge patient #${id}?`,
+        details: "",
+        confirmText: "Confirm",
+        cancelText: "Cancel",
+        danger: true
+    });
+
+    if (!confirmed) return;
+
+    try {
+        const result = await api(`/patients/${id}/discharge`, {
+            method: 'POST',
+            body: '{}'
+        });
+
+        toast(`${result.message} Total: ${money(result.totalPaise)}`);
+        await refreshAll();
+    }
+    catch (e) {
+        toast(e.message, true);
+    }
 }
+
+
+function showConfirmModal({
+    title,
+    message,
+    details,
+    confirmText = "Confirm",
+    cancelText = "Cancel",
+    danger = false
+}) {
+    return new Promise((resolve) => {
+        const modal = document.getElementById('confirmModal');
+
+        document.getElementById('confirmTitle').textContent = title;
+        document.getElementById('confirmMessage').textContent = message;
+        document.getElementById('confirmDetails').textContent = details;
+
+        const accept = document.getElementById('confirmAccept');
+        const cancel = document.getElementById('confirmCancel');
+
+        accept.textContent = confirmText;
+        cancel.textContent = cancelText;
+
+        accept.className = danger ? 'confirm-danger' : 'confirm-primary';
+
+        const cleanup = (value) => {
+            modal.close();
+            accept.removeEventListener('click', onAccept);
+            cancel.removeEventListener('click', onCancel);
+            modal.removeEventListener('cancel', onEscape);
+            resolve(value);
+        };
+
+        const onAccept = () => cleanup(true);
+        const onCancel = () => cleanup(false);
+        const onEscape = (event) => {
+            event.preventDefault();
+            cleanup(false);
+        };
+
+        accept.addEventListener('click', onAccept);
+        cancel.addEventListener('click', onCancel);
+        modal.addEventListener('cancel', onEscape);
+
+        modal.showModal();
+    });
+}
+
+
+
 async function openBill(id) {
   $('#billPatientId').value = id; showPage('billing');
   try {
