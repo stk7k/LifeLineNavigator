@@ -3,33 +3,407 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#101827">
+
     <title>Patient Dashboard | LifeLine Navigator</title>
-    <link rel="stylesheet" href="/auth.css">
+
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="/patient.css">
+
+    <script src="/patient.js" defer></script>
 </head>
+
 <body>
 
-    <main class="portal-container">
-        <section class="portal-card">
-            <h2>Patient Dashboard</h2>
-            <p>Welcome to LifeLine Navigator!</p>
+<div class="app-shell">
 
-            <button class="login-button" onclick="logout()">
-                Log Out
+    <aside class="sidebar" id="sidebar">
+
+        <a class="brand" href="#overview" aria-label="LifeLine Navigator home">
+            <span class="brand-mark">💙</span>
+            <span>
+                <strong>LifeLine</strong>
+                <small>Navigator</small>
+            </span>
+        </a>
+
+        <div class="nav-label">WORKSPACE</div>
+
+        <nav class="nav-list" aria-label="Patient navigation">
+
+            <button class="nav-link active" data-patient-page="overview">
+                <span class="nav-icon">▦</span> Overview
             </button>
-        </section>
+
+            <button class="nav-link" data-patient-page="profile">
+                <span class="nav-icon">♙</span> My Profile
+            </button>
+
+            <button class="nav-link" data-patient-page="doctor">
+                <span class="nav-icon">✚</span> My Doctor
+            </button>
+
+            <button class="nav-link" data-patient-page="beds">
+                <span class="nav-icon">▤</span> Bed Information
+            </button>
+
+            <button class="nav-link" data-patient-page="billing">
+                <span class="nav-icon">₹</span> Billing
+            </button>
+
+            <button class="nav-link logout-link" id="patientLogout">
+                <span>↪</span>
+                <span>Logout</span>
+            </button>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+
+            <div class="system-card">
+                <span class="status-dot"></span>
+                <div>
+                    <strong>Render Server : online</strong>
+                    <small>Current Server : Singapore</small>
+                </div>
+            </div>
+
+            <small class="sidebar-foot">Private Ltd.</small>
+
+        </div>
+
+    </aside>
+
+
+    <main class="main-area">
+
+        <header class="topbar">
+
+            <button class="mobile-menu" id="mobileMenu"
+                    aria-label="Toggle navigation">☰</button>
+
+            <div class="breadcrumb">
+                <span>Workspace</span>
+                <span class="crumb-sep">/</span>
+                <strong id="pageTitle">Overview</strong>
+            </div>
+
+            <div class="topbar-right">
+                <span class="today-label" id="todayLabel"></span>
+                <span class="avatar">PT</span>
+            </div>
+
+        </header>
+
+
+        <div class="content-wrap">
+
+            <!-- OVERVIEW -->
+
+            <section class="page active" id="page-overview">
+
+                <div class="page-heading">
+                    <div>
+                        <p class="eyebrow">PATIENT DASHBOARD</p>
+                        <h1>Hello, <span id="patientName">Rahul</span> 👋</h1>
+                        <p class="subheading">
+                            Here's a summary of your Hospital Ward information.
+                        </p>
+                    </div>
+
+                    <div class="patient-id">
+                        <span>Patient ID</span>
+                        <strong id="patientId">#0001</strong>
+                    </div>
+                </div>
+
+
+                <div class="stat-grid">
+
+                    <article class="stat-card">
+                        <div class="stat-top">
+                            <span>Admission Status</span>
+                            <span class="stat-icon green">✚</span>
+                        </div>
+                        <strong id="admissionStatus">Admitted</strong>
+                        <small>Your current hospital status</small>
+                    </article>
+
+                    <article class="stat-card">
+                        <div class="stat-top">
+                            <span>Assigned Doctor</span>
+                            <span class="stat-icon blue">♙</span>
+                        </div>
+                        <strong id="doctorName">Dr. Amit Verma</strong>
+                        <small id="doctorSpecialty">General Medicine</small>
+                    </article>
+
+                    <article class="stat-card">
+                        <div class="stat-top">
+                            <span>Bed Information</span>
+                            <span class="stat-icon violet">▤</span>
+                        </div>
+                        <strong id="bedNumber">General - 02</strong>
+                        <small>Currently assigned bed</small>
+                    </article>
+
+                    <article class="stat-card">
+                        <div class="stat-top">
+                            <span>Current Bill</span>
+                            <span class="stat-icon amber">₹</span>
+                        </div>
+                        <strong id="billAmount">₹1,300</strong>
+                        <small id="paymentStatus">Pending payment</small>
+                    </article>
+
+                </div>
+
+
+                <div class="dashboard-grid">
+
+                    <article class="panel">
+                        <div class="panel-heading">
+                            <div>
+                                <h2>Personal Information</h2>
+                                <p>Your registered patient details</p>
+                            </div>
+                            <button class="text-button" data-patient-page="profile">
+                                View details →
+                            </button>
+                        </div>
+
+                        <div class="detail-row">
+                            <span>Full Name</span>
+                            <strong id="detailName">Rahul Sharma</strong>
+                        </div>
+
+                        <div class="detail-row">
+                            <span>Patient ID</span>
+                            <strong id="detailId">#1001</strong>
+                        </div>
+
+                        <div class="detail-row">
+                            <span>Specialty</span>
+                            <strong id="detailSpecialty">General Medicine</strong>
+                        </div>
+
+                        <div class="detail-row">
+                            <span>Admission Date</span>
+                            <strong id="admissionDate">11 Nov 2026</strong>
+                        </div>
+                    </article>
+
+
+                    <article class="panel">
+                        <div class="panel-heading">
+                            <div>
+                                <h2>Quick Access</h2>
+                                <p>Frequently accessed information</p>
+                            </div>
+                        </div>
+
+                        <button class="quick-action" data-patient-page="doctor">
+                            <span class="quick-icon blue">✚</span>
+                            <span>
+                                <strong>My Doctor</strong>
+                                <small>View your assigned doctor</small>
+                            </span>
+                            <b>→</b>
+                        </button>
+
+                        <button class="quick-action" data-patient-page="beds">
+                            <span class="quick-icon violet">▤</span>
+                            <span>
+                                <strong>Bed Information</strong>
+                                <small>Check your assigned bed</small>
+                            </span>
+                            <b>→</b>
+                        </button>
+
+                        <button class="quick-action" data-patient-page="billing">
+                            <span class="quick-icon green">₹</span>
+                            <span>
+                                <strong>Billing Details</strong>
+                                <small>Review your current bill</small>
+                            </span>
+                            <b>→</b>
+                        </button>
+
+                    </article>
+
+                </div>
+
+            </section>
+
+
+            <!-- PROFILE -->
+
+            <section class="page" id="page-profile">
+
+                <div class="page-heading">
+                    <div>
+                        <p class="eyebrow">PATIENT RECORDS</p>
+                        <h1>My Profile</h1>
+                        <p class="subheading">Your registered personal information.</p>
+                    </div>
+                </div>
+
+                <article class="panel">
+                    <div class="panel-heading">
+                        <div>
+                            <h2>Personal Information</h2>
+                            <p>Your hospital registration details</p>
+                        </div>
+                    </div>
+
+                    <div class="detail-row">
+                        <span>Full Name</span>
+                        <strong id="profileName">Rahul Sharma</strong>
+                    </div>
+
+                    <div class="detail-row">
+                        <span>Patient ID</span>
+                        <strong id="profileId">#1001</strong>
+                    </div>
+
+                    <div class="detail-row">
+                        <span>Specialty</span>
+                        <strong id="profileSpecialty">General Medicine</strong>
+                    </div>
+
+                    <div class="detail-row">
+                        <span>Admission Date</span>
+                        <strong id="profileAdmissionDate">11 Nov 2026</strong>
+                    </div>
+
+                    <div class="detail-row">
+                        <span>Admission Status</span>
+                        <strong id="profileStatus">Admitted</strong>
+                    </div>
+                </article>
+
+            </section>
+
+
+            <!-- DOCTOR -->
+
+            <section class="page" id="page-doctor">
+
+                <div class="page-heading">
+                    <div>
+                        <p class="eyebrow">YOUR CARE TEAM</p>
+                        <h1>My Doctor</h1>
+                        <p class="subheading">Information about your assigned doctor.</p>
+                    </div>
+                </div>
+
+                <article class="panel">
+                    <div class="panel-heading">
+                        <div>
+                            <h2>Assigned Doctor</h2>
+                            <p>Your current healthcare provider</p>
+                        </div>
+                    </div>
+
+                    <div class="detail-row">
+                        <span>Doctor Name</span>
+                        <strong id="profileDoctorName">Dr. Amit Verma</strong>
+                    </div>
+
+                    <div class="detail-row">
+                        <span>Specialty</span>
+                        <strong id="profileDoctorSpecialty">General Medicine</strong>
+                    </div>
+                </article>
+
+            </section>
+
+
+            <!-- BEDS -->
+
+            <section class="page" id="page-beds">
+
+                <div class="page-heading">
+                    <div>
+                        <p class="eyebrow">WARD INFORMATION</p>
+                        <h1>Bed Information</h1>
+                        <p class="subheading">Details about your current bed assignment.</p>
+                    </div>
+                </div>
+
+                <article class="panel">
+                    <div class="panel-heading">
+                        <div>
+                            <h2>Current Bed Assignment</h2>
+                            <p>Your allocated hospital accommodation</p>
+                        </div>
+                    </div>
+
+                    <div class="detail-row">
+                        <span>Ward Type</span>
+                        <strong id="bedWard">General</strong>
+                    </div>
+
+                    <div class="detail-row">
+                        <span>Bed Number</span>
+                        <strong id="bedDetailNumber">02</strong>
+                    </div>
+
+                    <div class="detail-row">
+                        <span>Admission Status</span>
+                        <strong id="bedAdmissionStatus">Admitted</strong>
+                    </div>
+                </article>
+
+            </section>
+
+
+            <!-- BILLING -->
+
+            <section class="page" id="page-billing">
+
+                <div class="page-heading">
+                    <div>
+                        <p class="eyebrow">PATIENT ACCOUNTS</p>
+                        <h1>Billing</h1>
+                        <p class="subheading">Review your current hospital bill.</p>
+                    </div>
+                </div>
+
+                <article class="panel">
+                    <div class="panel-heading">
+                        <div>
+                            <h2>Billing Overview</h2>
+                            <p>Your current hospital billing information</p>
+                        </div>
+                    </div>
+
+                    <div class="bill-amount">
+                        <span>Current Bill</span>
+                        <h1 id="billingAmount">₹1,300</h1>
+                    </div>
+
+                    <div class="detail-row">
+                        <span>Payment Status</span>
+                        <strong id="billingStatus">Pending</strong>
+                    </div>
+
+                </article>
+
+            </section>
+
+
+            <footer class="footer">
+                <span>LifeLine Navigator</span>
+                <span>Hospital Management System · PBL Project</span>
+            </footer>
+
+        </div>
+
     </main>
 
-    <script>
-        if (sessionStorage.getItem("loggedInRole") !== "patient") {
-            window.location.href = "/patient-login.html";
-        }
-
-        function logout() {
-            sessionStorage.removeItem("loggedInRole");
-            window.location.href = "/";
-        }
-    </script>
+</div>
 
 </body>
 </html>
