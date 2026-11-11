@@ -4,6 +4,10 @@ if (sessionStorage.getItem("loggedInRole") !== "patient") {
     window.location.replace("/patient-login.html");
 }
 
+// Get logged-in patient ID
+const patientId = Number(
+    sessionStorage.getItem("loggedInPatientId")
+);
 
 // Patient navigation
 const patientNavButtons = document.querySelectorAll("[data-patient-page]");
@@ -18,7 +22,6 @@ const patientPageNames = {
 };
 
 function showPatientPage(page) {
-
     patientPages.forEach(section => {
         section.classList.toggle(
             "active",
@@ -39,22 +42,17 @@ function showPatientPage(page) {
     document.getElementById("sidebar").classList.remove("open");
 }
 
-
-// Navigation click events
+// Navigation events
 patientNavButtons.forEach(button => {
-
     button.addEventListener("click", () => {
         showPatientPage(button.dataset.patientPage);
     });
-
 });
-
 
 // Mobile sidebar
 document.getElementById("mobileMenu").addEventListener("click", () => {
     document.getElementById("sidebar").classList.toggle("open");
 });
-
 
 // Today's date
 document.getElementById("todayLabel").textContent =
@@ -64,66 +62,154 @@ document.getElementById("todayLabel").textContent =
         year: "numeric"
     });
 
-
 // Logout
 document.getElementById("patientLogout").addEventListener("click", () => {
-
     sessionStorage.removeItem("loggedInRole");
+    sessionStorage.removeItem("loggedInPatientId");
 
     window.location.href = "/patient-login.html";
-
 });
 
-
-// Temporary demo patient data
-const patient = {
-    name: "Rahul Sharma",
-    id: 1001,
-    specialty: "General Medicine",
-    admissionDate: "11 Nov 2026",
-    status: "Admitted",
-    doctor: "Dr. Amit Verma",
-    doctorSpecialty: "General Medicine",
-    ward: "General",
-    bed: "02",
-    bill: "₹1,300",
-    payment: "Pending"
-};
-
-
-// Populate patient information
-const setText = (id, value) => {
+// Helper to update HTML elements
+function setText(id, value) {
     const element = document.getElementById(id);
-    if (element) element.textContent = value;
-};
 
-[
-    ["patientName", patient.name],
-    ["patientId", `#${patient.id}`],
-    ["detailName", patient.name],
-    ["detailId", `#${patient.id}`],
-    ["detailSpecialty", patient.specialty],
-    ["admissionDate", patient.admissionDate],
-    ["admissionStatus", patient.status],
-    ["doctorName", patient.doctor],
-    ["doctorSpecialty", patient.doctorSpecialty],
-    ["bedNumber", `${patient.ward} - ${patient.bed}`],
-    ["billAmount", patient.bill],
-    ["paymentStatus", `${patient.payment} payment`],
+    if (element) {
+        element.textContent = value;
+    }
+}
 
-    ["profileName", patient.name],
-    ["profileId", `#${patient.id}`],
-    ["profileSpecialty", patient.specialty],
-    ["profileAdmissionDate", patient.admissionDate],
-    ["profileStatus", patient.status],
+// Format paise into rupees
+function formatMoney(paise) {
+    return "₹" + (paise / 100).toLocaleString("en-IN", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+}
 
-    ["profileDoctorName", patient.doctor],
-    ["profileDoctorSpecialty", patient.doctorSpecialty],
+// Fetch patient information
+async function loadPatientDashboard() {
+    try {
+        if (!patientId || !Number.isInteger(patientId)) {
+            throw new Error("Invalid patient login. Please log in again.");
+        }
 
-    ["bedWard", patient.ward],
-    ["bedDetailNumber", patient.bed],
-    ["bedAdmissionStatus", patient.status],
+        // Fetch backend information
+        const [patientsRes, doctorsRes, bedsRes] = await Promise.all([
+            fetch("/api/patients"),
+            fetch("/api/doctors"),
+            fetch("/api/beds")
+        ]);
 
-    ["billingAmount", patient.bill],
-    ["billingStatus", patient.payment]
-].forEach(([id, value]) => setText(id, value));
+        if (!patientsRes.ok || !doctorsRes.ok || !bedsRes.ok) {
+            throw new Error("Could not connect to the hospital server.");
+        }
+
+        const [patients, doctors, beds] = await Promise.all([
+            patientsRes.json(),
+            doctorsRes.json(),
+            bedsRes.json()
+        ]);
+
+        // Find the logged-in patient
+        const patient = patients.find(p => p.id === patientId);
+
+        if (!patient) {
+            throw new Error(
+                "Patient record not found. Please contact the administrator."
+            );
+        }
+
+        // Find assigned doctor
+        const doctor = doctors.find(d => d.id === patient.doctorId);
+
+        // Find assigned bed
+        const bed = beds.find(b => b.id === patient.bedId);
+
+        // Fetch billing information
+        let bill = null;
+
+        const billRes = await fetch(`/api/bills/${patientId}`);
+
+        if (billRes.ok) {
+            const billData = await billRes.json();
+
+            if (billData.success) {
+                bill = billData;
+            }
+        }
+
+        // Patient details
+        setText("patientName", patient.name);
+        setText("patientId", `#${patient.id}`);
+
+        setText("detailName", patient.name);
+        setText("detailId", `#${patient.id}`);
+        setText("detailSpecialty", patient.specialty);
+
+        setText("admissionStatus", patient.status);
+        setText("profileStatus", patient.status);
+        setText("bedAdmissionStatus", patient.status);
+
+        // Admission date is not currently stored by the backend
+        setText("admissionDate", "Not available");
+        setText("profileAdmissionDate", "Not available");
+
+        // Doctor information
+        const doctorName = doctor ? doctor.name : "Not assigned";
+        const doctorSpecialty = doctor ? doctor.specialty : "Not assigned";
+
+        setText("doctorName", doctorName);
+        setText("doctorSpecialty", doctorSpecialty);
+
+        setText("profileDoctorName", doctorName);
+        setText("profileDoctorSpecialty", doctorSpecialty);
+
+        // Bed information
+        const ward = bed ? bed.ward : "Not assigned";
+        const bedNumber = bed ? bed.id : "Not assigned";
+
+        setText(
+            "bedNumber",
+            bed ? `${ward} - ${bedNumber}` : "Not assigned"
+        );
+
+        setText("bedWard", ward);
+        setText("bedDetailNumber", bedNumber);
+
+        // Billing information
+        if (bill) {
+            const total = formatMoney(bill.totalPaise);
+            const billStatus = bill.closed ? "Finalized" : "Open";
+
+            setText("billAmount", total);
+            setText("billingAmount", total);
+
+            setText("paymentStatus", `${billStatus} bill`);
+            setText("billingStatus", billStatus);
+        } else {
+            setText("billAmount", "No bill yet");
+            setText("billingAmount", "No bill yet");
+
+            setText("paymentStatus", "No bill available");
+            setText("billingStatus", "No bill available");
+        }
+
+    } catch (error) {
+        console.error("Patient dashboard error:", error);
+
+        setText("patientName", "Unable to load patient");
+        setText("patientId", "—");
+
+        alert(error.message);
+    }
+}
+
+// Load dashboard data
+//loadPatientDashboard();
+
+// Load immediately
+loadPatientDashboard();
+
+// Refresh patient information every 5 seconds
+setInterval(loadPatientDashboard, 5000);

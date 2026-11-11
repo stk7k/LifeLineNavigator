@@ -10,6 +10,7 @@ const testAccounts = {
     patient: {
         username: "user",
         password: "123",
+        patientId: 2,
         redirect: "/patient.html"
     }
 };
@@ -29,6 +30,14 @@ function handleLogin(formId, usernameId, passwordId, role) {
 
         if (username === account.username && password === account.password) {
             sessionStorage.setItem("loggedInRole", role);
+
+            //new
+            if (role === "patient") {
+                sessionStorage.setItem(
+                    "loggedInPatientId",
+                    account.patientId
+                );
+            }
 
             window.location.href = account.redirect;
         } 

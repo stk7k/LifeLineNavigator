@@ -131,10 +131,16 @@ footer {
 
 .back-link {
     display: inline-block;
+    font-weight: bold;
+    letter-spacing: 1px;
     color: var(--muted);
     text-decoration: none;
-    font-size: 14px;
-    margin-bottom: 30px;
+    font-size: 11px;
+    margin-left: 150px;
+    color: var(rgb(182, 178, 178));
+    background: var(--surface-hover);
+    padding: 7px 18px;
+    border-radius: 6px;
 }
 
 .back-link:hover {

@@ -75,6 +75,7 @@ int main() {
     //    return 1;
     //}
 
+    // RENDER SERVER CONNECTION
     const char *host = "0.0.0.0";
     int port = 8080;
 
