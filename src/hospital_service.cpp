@@ -2,11 +2,10 @@
 #include <sstream>
 #include <stdexcept>
 
+
+
 namespace {
 constexpr int ICU_SEVERITY = 8;
-constexpr long long GENERAL_BED_FEE = 50000;
-constexpr long long ICU_BED_FEE = 250000;
-constexpr long long CONSULT_FEE = 30000;
 
 nlohmann::json patientJson(const Patient &p) {
     return {

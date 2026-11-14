@@ -13,6 +13,10 @@
 #include "queue.h"
 #include <nlohmann/json.hpp>
 
+constexpr long long GENERAL_BED_FEE = 50000;
+constexpr long long ICU_BED_FEE = 250000;
+constexpr long long CONSULT_FEE = 30000;
+
 class HospitalService {
 public:
     HospitalService();

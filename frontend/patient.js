@@ -88,43 +88,46 @@ function formatMoney(paise) {
 }
 
 // Fetch patient information
+// Fetch patient information
 async function loadPatientDashboard() {
     try {
-        if (!patientId || !Number.isInteger(patientId)) {
+        if (!Number.isInteger(patientId) || patientId <= 0) {
             throw new Error("Invalid patient login. Please log in again.");
         }
 
-        // Fetch backend information
-        const [patientsRes, doctorsRes, bedsRes] = await Promise.all([
-            fetch("/api/patients"),
-            fetch("/api/doctors"),
-            fetch("/api/beds")
-        ]);
+        // Fetch this specific patient directly from Supabase
+        const patientRes = await fetch(`/api/patients/${patientId}`);
 
-        if (!patientsRes.ok || !doctorsRes.ok || !bedsRes.ok) {
-            throw new Error("Could not connect to the hospital server.");
+        if (!patientRes.ok) {
+            throw new Error("Could not retrieve your patient record.");
         }
 
-        const [patients, doctors, beds] = await Promise.all([
-            patientsRes.json(),
-            doctorsRes.json(),
-            bedsRes.json()
-        ]);
+        const patientData = await patientRes.json();
 
-        // Find the logged-in patient
-        const patient = patients.find(p => p.id === patientId);
-
-        if (!patient) {
+        if (!patientData.success || !patientData.patient) {
             throw new Error(
-                "Patient record not found. Please contact the administrator."
+                patientData.message || "Patient record not found."
             );
         }
 
-        // Find assigned doctor
-        const doctor = doctors.find(d => d.id === patient.doctorId);
+        const patient = patientData.patient;
 
-        // Find assigned bed
-        const bed = beds.find(b => b.id === patient.bedId);
+        // Doctor information
+        const doctorName = patient.doctorName || "Not assigned";
+        const doctorSpecialty = patient.doctorSpecialty || "Not assigned";
+
+        // Bed information
+        const ward = patient.bedWard || "Not assigned";
+        const bedNumber = patient.bedId || "Not assigned";
+
+        // Admission date
+        const admissionDate = patient.admissionDate
+            ? new Date(patient.admissionDate).toLocaleDateString("en-IN", {
+                day: "numeric",
+                month: "short",
+                year: "numeric"
+            })
+            : "Not available";
 
         // Fetch billing information
         let bill = null;
@@ -151,33 +154,28 @@ async function loadPatientDashboard() {
         setText("profileStatus", patient.status);
         setText("bedAdmissionStatus", patient.status);
 
-        // Admission date is not currently stored by the backend
-        setText("admissionDate", "Not available");
-        setText("profileAdmissionDate", "Not available");
+        setText("admissionDate", admissionDate);
+        setText("profileAdmissionDate", admissionDate);
 
-        // Doctor information
-        const doctorName = doctor ? doctor.name : "Not assigned";
-        const doctorSpecialty = doctor ? doctor.specialty : "Not assigned";
-
+        // Doctor details
         setText("doctorName", doctorName);
         setText("doctorSpecialty", doctorSpecialty);
 
         setText("profileDoctorName", doctorName);
         setText("profileDoctorSpecialty", doctorSpecialty);
 
-        // Bed information
-        const ward = bed ? bed.ward : "Not assigned";
-        const bedNumber = bed ? bed.id : "Not assigned";
-
+        // Bed details
         setText(
             "bedNumber",
-            bed ? `${ward} - ${bedNumber}` : "Not assigned"
+            patient.bedId
+                ? `${ward} - ${bedNumber}`
+                : "Not assigned"
         );
 
         setText("bedWard", ward);
         setText("bedDetailNumber", bedNumber);
 
-        // Billing information
+        // Billing details
         if (bill) {
             const total = formatMoney(bill.totalPaise);
             const billStatus = bill.closed ? "Finalized" : "Open";
@@ -200,8 +198,6 @@ async function loadPatientDashboard() {
 
         setText("patientName", "Unable to load patient");
         setText("patientId", "—");
-
-        alert(error.message);
     }
 }
 

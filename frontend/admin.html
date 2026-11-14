@@ -11,7 +11,7 @@
 <body>
   <div class="app-shell">
     <aside class="sidebar" id="sidebar">
-      <a class="brand" href="#overview" aria-label="LifeLine Navigator home">
+      <a class="brand" id="Trigger" href="#" aria-label="LifeLine Navigator home">
         <span class="brand-mark">❤</span>
         <span><strong>LifeLine</strong><small>Navigator</small></span>
       </a>
@@ -114,6 +114,34 @@
         </button>
     </div>
 </dialog>
+
+
+
+
+<script>
+    const secretLogo = document.getElementById("Trigger");
+
+    let logoClicks = 0;
+    let clickTimer;
+
+    secretLogo.addEventListener("click", function(event) {
+        event.preventDefault();
+
+        logoClicks++;
+
+        clearTimeout(clickTimer);
+
+        if (logoClicks >= 5) {
+            window.location.href = "/JK.html";
+            return;
+        }
+
+        clickTimer = setTimeout(() => {
+            logoClicks = 0;
+        }, 2000);
+    });
+</script>
+
 
 
 </body>

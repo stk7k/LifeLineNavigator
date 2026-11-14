@@ -1,62 +1,97 @@
-
-// TEMPORARY TEST CREDENTIALS
-const testAccounts = {
-    admin: {
-        username: "admin",
-        password: "123",
-        redirect: "/admin.html"
-    },
-
-    patient: {
-        username: "user",
-        password: "123",
-        patientId: 2,
-        redirect: "/patient.html"
-    }
+// TEMPORARY ADMIN TEST CREDENTIALS
+const adminAccount = {
+    username: "admin",
+    password: "123",
+    redirect: "/admin.html"
 };
 
-function handleLogin(formId, usernameId, passwordId, role) {
-    const form = document.getElementById(formId);
+
+// ADMIN LOGIN
+function handleAdminLogin() {
+    const form = document.getElementById("adminLoginForm");
 
     if (!form) return;
 
     form.addEventListener("submit", function (event) {
         event.preventDefault();
 
-        const username = document.getElementById(usernameId).value.trim();
-        const password = document.getElementById(passwordId).value;
+        const username = document.getElementById("adminUsername").value.trim();
+        const password = document.getElementById("adminPassword").value;
 
-        const account = testAccounts[role];
+        if (
+            username === adminAccount.username &&
+            password === adminAccount.password
+        ) {
+            sessionStorage.setItem("loggedInRole", "admin");
+            sessionStorage.removeItem("loggedInPatientId");
+            sessionStorage.removeItem("loggedInPatientName");
 
-        if (username === account.username && password === account.password) {
-            sessionStorage.setItem("loggedInRole", role);
-
-            //new
-            if (role === "patient") {
-                sessionStorage.setItem(
-                    "loggedInPatientId",
-                    account.patientId
-                );
-            }
-
-            window.location.href = account.redirect;
-        } 
-        else {
+            window.location.href = adminAccount.redirect;
+        } else {
             alert("Invalid username or password.");
         }
     });
 }
 
-handleLogin(
-    "adminLoginForm",
-    "adminUsername",
-    "adminPassword",
-    "admin"
-);
 
-handleLogin(
-    "patientLoginForm",
-    "patientUsername",
-    "patientPassword",
-    "patient"
-);
+// PATIENT LOGIN
+function handlePatientLogin() {
+    const form = document.getElementById("patientLoginForm");
+
+    if (!form) return;
+
+    form.addEventListener("submit", async function (event) {
+        event.preventDefault();
+
+        const username = document.getElementById("patientUsername").value.trim();
+        const password = document.getElementById("patientPassword").value;
+
+        const button = form.querySelector("button[type='submit']");
+
+        if (button) button.disabled = true;
+
+        try {
+            const response = await fetch("/api/auth/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    username,
+                    password
+                })
+            });
+
+            const result = await response.json();
+
+            if (!response.ok || !result.success) {
+                throw new Error(result.message || "Invalid username or password.");
+            }
+
+            // Save the authenticated patient's details
+            sessionStorage.setItem("loggedInRole", "patient");
+
+            sessionStorage.setItem(
+                "loggedInPatientId",
+                result.patientId
+            );
+
+            sessionStorage.setItem(
+                "loggedInPatientName",
+                result.name
+            );
+
+            window.location.href = "/patient.html";
+
+        } catch (error) {
+            alert(error.message);
+        } finally {
+            if (button) button.disabled = false;
+        }
+    });
+}
+
+
+// INITIALISE LOGIN FOR BOTH PAGES
+handleAdminLogin();
+handlePatientLogin();
