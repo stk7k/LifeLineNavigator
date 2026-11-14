@@ -26,6 +26,10 @@ public:
     nlohmann::json beds();
     nlohmann::json bill(int patient_id);
     nlohmann::json registerPatient(const nlohmann::json &body);
+    nlohmann::json registerPatientWithId(
+        int patient_id,
+        const nlohmann::json &body
+    );
     nlohmann::json admitNext();
     nlohmann::json addCharge(int patient_id, const nlohmann::json &body);
     nlohmann::json discharge(int patient_id);

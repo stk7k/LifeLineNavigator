@@ -1,0 +1,164 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0b1120">
+
+    <title>Patient Signup | LifeLine Navigator</title>
+
+    <link rel="stylesheet" href="/auth.css">
+</head>
+<body>
+    <main class="login-container patient-theme">
+
+        <div class="login-brand">
+            <div class="brand-icon">✚</div>
+            <h1>LifeLine <span>Navigator</span></h1>
+            <p>Hospital Management System</p>
+        </div>
+
+        <section class="login-card">
+
+            <div class="login-heading">
+                <span class="portal-tag">PATIENT REGISTRATION</span>
+                <h2>Create Account</h2>
+                <p>Register to access your patient dashboard.</p>
+            </div>
+
+            <form id="patientSignupForm">
+
+                <div class="form-group">
+                    <label for="signupName">Full Name</label>
+                    <input
+                        type="text"
+                        id="signupName"
+                        placeholder="Enter your full name"
+                        maxlength="80"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="signupUsername">Username</label>
+                    <input
+                        type="text"
+                        id="signupUsername"
+                        placeholder="Choose a username"
+                        minlength="3"
+                        maxlength="30"
+                        pattern="[A-Za-z0-9_]+"
+                        title="Use letters, numbers and underscores only."
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="signupPassword">Password</label>
+                    <input
+                        type="password"
+                        id="signupPassword"
+                        placeholder="Create a password"
+                        minlength="8"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input
+                        type="password"
+                        id="confirmPassword"
+                        placeholder="Re-enter your password"
+                        minlength="8"
+                        required
+                    >
+                </div>
+
+                <p id="signupMessage" role="status"></p>
+
+                <button type="submit" class="login-button">
+                    Create Account →
+                </button>
+
+                <a href="/patient-login.html" class="back-link">
+                    ← BACK TO LOGIN
+                </a>
+
+            </form>
+
+            <p class="login-footer">
+                Your health information, all in one place.
+            </p>
+
+        </section>
+    </main>
+
+    <script src="/auth.js"></script>
+
+    <script>
+      
+    const signupForm = document.getElementById("patientSignupForm");
+
+    signupForm.addEventListener("submit", async function (event) {
+        event.preventDefault();
+
+        const name = document.getElementById("signupName").value.trim();
+        const username = document.getElementById("signupUsername").value.trim();
+        const password = document.getElementById("signupPassword").value;
+        const confirmPassword = document.getElementById("confirmPassword").value;
+        const message = document.getElementById("signupMessage");
+        const button = signupForm.querySelector("button[type='submit']");
+
+        if (password !== confirmPassword) {
+            message.textContent = "Passwords do not match.";
+            message.style.color = "#f87171";
+            return;
+        }
+
+        message.textContent = "Creating your account...";
+        message.style.color = "#94a3b8";
+        button.disabled = true;
+
+        try {
+            const response = await fetch("/api/auth/signup", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    name,
+                    username,
+                    password
+                })
+            });
+
+            const result = await response.json();
+
+            if (!response.ok || !result.success) {
+                throw new Error(result.message || "Signup failed.");
+            }
+
+            message.textContent =
+                "Account created successfully! Redirecting to login...";
+            message.style.color = "#34d399";
+
+            signupForm.reset();
+
+            setTimeout(() => {
+                window.location.href = "/patient-login.html";
+            }, 1500);
+
+        } catch (error) {
+            message.textContent = error.message;
+            message.style.color = "#f87171";
+        } finally {
+            button.disabled = false;
+        }
+    });
+
+    </script>
+
+</body>
+</html>

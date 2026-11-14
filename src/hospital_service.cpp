@@ -120,7 +120,69 @@ nlohmann::json HospitalService::registerPatient(const nlohmann::json &body) {
         return errorJson(e.what());
     }
 }
+// //////
 
+
+nlohmann::json HospitalService::registerPatientWithId(
+    int patient_id,
+    const nlohmann::json &body
+) 
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+
+    try {
+        if (patient_id <= 0) {
+            return errorJson("Invalid patient ID.");
+        }
+
+        if (patients_.count(patient_id)) {
+            return errorJson("Patient ID already exists.");
+        }
+
+        std::string name = body.at("name").get<std::string>();
+        std::string specialty = body.at("specialty").get<std::string>();
+        int severity = body.at("severity").get<int>();
+
+        auto patient = std::make_unique<Patient>(
+            patient_id,
+            name,
+            severity,
+            specialty
+        );
+
+        Patient *raw = patient.get();
+
+        // Store the patient before adding it to the queue.
+        auto inserted = patients_.emplace(patient_id, std::move(patient));
+
+        if (!inserted.second) {
+            return errorJson("Could not register patient.");
+        }
+
+        // Add the patient to the existing C waiting queue.
+        if (queue_enqueue(&waiting_, raw) != 0) {
+            patients_.erase(patient_id);
+            return errorJson("Could not add patient to the waiting queue.");
+        }
+
+        // Keep future locally generated IDs above this ID.
+        if (patient_id >= next_patient_id_) {
+            next_patient_id_ = patient_id + 1;
+        }
+
+        return {
+            {"success", true},
+            {"message", "Patient registered and added to the waiting queue."},
+            {"patient", patientJson(*raw)}
+        };
+
+    } catch (const std::exception &e) {
+        return errorJson(e.what());
+    }
+}
+
+
+// //////
 nlohmann::json HospitalService::admitNext() {
     std::lock_guard<std::mutex> lock(mutex_);
     try {

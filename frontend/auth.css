@@ -269,3 +269,26 @@ footer {
 .patient-theme {
     --accent: #2168ee;
 }
+
+/*SIGNUP*/
+.signup-prompt {
+    text-align: center;
+    color: var(--muted);
+    font-size: 13px;
+    margin-top: 20px;
+}
+
+.signup-prompt a {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.signup-prompt a:hover {
+    text-decoration: underline;
+}
+
+#signupMessage {
+    font-size: 13px;
+    margin-bottom: 12px;
+}

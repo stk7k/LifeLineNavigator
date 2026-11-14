@@ -1,9 +1,11 @@
+#include <cctype>
 #include "hospital_service.h"
 #include <httplib.h>
 #include <nlohmann/json.hpp>
 #include <iostream>
 #include <string>
 #include <cstdlib>
+#include "database.h"
 
 using nlohmann::json;
 
@@ -13,12 +15,138 @@ static void sendJson(httplib::Response &res, const json &payload, int status = 2
 }
 
 int main() {
+    Database database;
     HospitalService hospital;
     httplib::Server server;
 
     server.Get("/api/health", [](const httplib::Request &, httplib::Response &res) {
         sendJson(res, {{"success", true}, {"service", "LifeLine Navigator API"}});
     });
+
+
+server.Post("/api/auth/signup", [&](const httplib::Request &req,
+                                    httplib::Response &res) {
+    bool transactionStarted = false;
+
+    try {
+        json body = json::parse(req.body);
+
+        std::string name = body.at("name").get<std::string>();
+        std::string username = body.at("username").get<std::string>();
+        std::string password = body.at("password").get<std::string>();
+
+        // Basic input validation
+        if (name.empty() || name.size() > 80 ||
+            username.size() < 3 || username.size() > 30 ||
+            password.size() < 8) {
+            sendJson(res, {
+                {"success", false},
+                {"message", "Please check your registration details."}
+            }, 400);
+            return;
+        }
+
+        // Normalise username
+        for (char &c : username) {
+            c = static_cast<char>(
+                std::tolower(static_cast<unsigned char>(c))
+            );
+        }
+
+        for (unsigned char c : username) {
+            if (!std::isalnum(c) && c != '_') {
+                sendJson(res, {
+                    {"success", false},
+                    {"message", "Username can contain only letters, numbers and underscores."}
+                }, 400);
+                return;
+            }
+        }
+
+        // Begin database transaction
+        PGresult *result = database.execute("BEGIN");
+        PQclear(result);
+        transactionStarted = true;
+
+        // Create patient and retrieve Supabase-generated ID
+        result = database.execute(
+            "INSERT INTO public.patients "
+            "(name, severity, specialty, status) "
+            "VALUES ($1, 5, 'General Medicine', 'waiting') "
+            "RETURNING id",
+            {name}
+        );
+
+        int patientId = std::stoi(PQgetvalue(result, 0, 0));
+        PQclear(result);
+
+        // Create login account with bcrypt password hash
+        result = database.execute(
+            "INSERT INTO public.patient_accounts "
+            "(patient_id, username, password_hash) "
+            "VALUES ($1, $2, crypt($3, gen_salt('bf', 12)))",
+            {
+                std::to_string(patientId),
+                username,
+                password
+            }
+        );
+        PQclear(result);
+
+        // Commit both inserts together
+        result = database.execute("COMMIT");
+        PQclear(result);
+        transactionStarted = false;
+
+        // Add patient to the existing in-memory hospital queue
+        json patientBody = {
+            {"name", name},
+            {"severity", 5},
+            {"specialty", "General Medicine"}
+        };
+
+        json registration =
+            hospital.registerPatientWithId(patientId, patientBody);
+
+        if (!registration.value("success", false)) {
+            // Compensate if the in-memory registration fails
+            result = database.execute(
+                "DELETE FROM public.patients WHERE id = $1",
+                {std::to_string(patientId)}
+            );
+            PQclear(result);
+
+            sendJson(res, registration, 500);
+            return;
+        }
+
+        sendJson(res, {
+            {"success", true},
+            {"message", "Account created successfully."},
+            {"patientId", patientId}
+        }, 201);
+
+    } catch (const std::exception &e) {
+
+        if (transactionStarted) {
+            try {
+                PGresult *rollback = database.execute("ROLLBACK");
+                PQclear(rollback);
+            } catch (...) {
+                // Preserve the original error.
+            }
+        }
+
+        std::cerr << "Signup error: " << e.what() << "\n";
+
+        sendJson(res, {
+            {"success", false},
+            {"message", "Registration failed. Please check your details or try again."}
+        }, 400);
+    }
+});
+
+
     server.Get("/api/dashboard", [&](const httplib::Request &, httplib::Response &res) {
         sendJson(res, hospital.dashboard());
     });
