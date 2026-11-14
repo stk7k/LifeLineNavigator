@@ -22,6 +22,7 @@ FetchContent_Declare(json
 )
 FetchContent_MakeAvailable(httplib json)
 find_package(Threads REQUIRED)
+find_package(PostgreSQL REQUIRED)
 
 set(HOSPITAL_SOURCES
     src/bed.cpp src/bedStack.c
@@ -30,9 +31,20 @@ set(HOSPITAL_SOURCES
     src/patient.cpp src/queue.c
 )
 
-add_executable(lifeline_server ${HOSPITAL_SOURCES} src/hospital_service.cpp src/api.cpp)
+add_executable(lifeline_server
+    ${HOSPITAL_SOURCES}
+    src/hospital_service.cpp
+    src/api.cpp
+    src/database.cpp
+)
+
 target_include_directories(lifeline_server PRIVATE src)
-target_link_libraries(lifeline_server PRIVATE httplib::httplib nlohmann_json::nlohmann_json Threads::Threads)
+target_link_libraries(lifeline_server PRIVATE
+    httplib::httplib
+    nlohmann_json::nlohmann_json
+    Threads::Threads
+    PostgreSQL::PostgreSQL
+)
 if(WIN32)
     target_link_libraries(lifeline_server PRIVATE ws2_32)
 endif()

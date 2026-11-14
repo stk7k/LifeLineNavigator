@@ -2,10 +2,7 @@
 FROM debian:bookworm-slim
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential \
-    cmake \
-    git \
-    ca-certificates \
+    build-essential cmake git ca-certificates libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
